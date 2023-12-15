@@ -1,15 +1,143 @@
-<!DOCTYPE html>
+<!doctype html>
+
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <button id="getDetails">Get device details</button>
-    <div id="details"></div>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="Sample illustrating the pass through use case of Web NFC.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>PASS THROUGH USECASE DEMO</title>
+    <script>
+      // Add a global error event listener early on in the page load, to help ensure that browsers
+      // which don't support specific functionality still end up displaying a meaningful message.
+      window.addEventListener('error', function(error) {
+        if (ChromeSamples && ChromeSamples.setStatus) {
+          console.error(error);
+          ChromeSamples.setStatus(error.message + ' (Your browser may not support this feature.)');
+          error.preventDefault();
+        }
+      });
+    </script>
 
-    <script src="script.js"></script>
+</head>
+
+<body>
+
+
+<button id="ledOnButton">LEDON</button>
+<button id="ledOffButton">LED OFF</button>
+
+<script src="webapi.ts"></script>
+
+<script>
+  var ChromeSamples = {
+    log: function() {
+      var line = Array.prototype.slice.call(arguments).map(function(argument) {
+        return typeof argument === 'string' ? argument : JSON.stringify(argument);
+      }).join(' ');
+
+      document.querySelector('#log').textContent += line + '\n';
+    },
+
+    clearLog: function() {
+      document.querySelector('#log').textContent = '';
+    },
+
+    setStatus: function(status) {
+      document.querySelector('#status').textContent = status;
+    },
+
+    setContent: function(newContent) {
+      var content = document.querySelector('#content');
+      while(content.hasChildNodes()) {
+        content.removeChild(content.lastChild);
+      }
+      content.appendChild(newContent);
+    }
+  };
+</script>
+
+<h3>Live Output</h3>
+<div id="output" class="output">
+  <div id="content"></div>
+  <div id="status"></div>
+  <pre id="log"></pre>
+</div>
+
+<script>
+  if (/Chrome\/(\d+\.\d+.\d+.\d+)/.test(navigator.userAgent)){
+    // Let's log a warning if the sample is not supposed to execute on this
+    // version of Chrome.
+    if (89 > parseInt(RegExp.$1)) {
+      ChromeSamples.setStatus('Warning! Keep in mind this sample has been tested with Chrome ' + 89 + '.');
+    }
+  }
+</script>
+
+
+<script>
+  log = ChromeSamples.log;
+  
+  if (!("NDEFReader" in window))
+    ChromeSamples.setStatus("Web NFC is not available. Use Chrome on Android.");
+      const apduCommands = 
+      // APDU commands here  
+      array.forEach(element => 
+      {
+      const selectT4TFileCommand = [0x00, 0xA4, 0x04, 0x00, 0x04, 0x01, 0x02, 0x03, 0x04,0x00];
+      const selectT4TFileResponse = card.transmit(selectT4TFileCommand);
+
+      const setLEDCommand = [0x00, 0x00, 0x00, 0x01, 0x00, 0x00];
+      const setLEDResponse = card.transmit(setLEDCommand);
+
+      });
+
+
+     ledOnButton.addEventListener("click", async () =>
+    {
+      log("User clicked LED ON button");
+    
+    
+      let LEDstatus = false;
+
+      const ndef = new NDEFReader();
+      await ndef.scan();
+
+      ndef.onreading = event => 
+      {
+
+      if (ledOnButton.button === 'LEDON') {
+          // If "LEDON" button is pressed, turn on LED on the MCU
+          //const mcuInstance = new mcu.Mcu();
+          //mcuInstance.turnOn(ledPin);
+          LEDstatus = true;
+      } else 
+      {
+          // If any other button is pressed, turn off LED on the MCU and set LEDstatus to false
+          //const mcuInstance = new mcu.Mcu();
+          //mcuInstance.turnOff(ledPin);
+         LEDstatus = false;
+      } 
+      }
+    } );
+
+     for (const command of apduCommands)
+     {
+      try {
+        // Send the command to the card
+        const response =  reader.transmit(Buffer.from(command, 'hex'));
+        console.log(`Command: ${command}`);
+        console.log(`Response: ${response.toString('hex')}`);
+      } catch (error) {
+        console.error(`Error sending command: ${command}`);
+        console.error(error);
+      }
+     }
+
+
+
+</script> 
+
   </body>
-</html>
+  </html>
